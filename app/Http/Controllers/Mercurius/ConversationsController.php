@@ -25,9 +25,10 @@ class ConversationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(ConversationRepository $conversation, $userSlug = null)
+    public function index($userSlug, ConversationRepository $conversation, UserRepository $user)
     {
-        return response($conversation->all());
+        $sender = $user->find($userSlug)->id;
+        return response($conversation->all($sender));
     }
 
     /**
@@ -39,16 +40,16 @@ class ConversationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show($recipient, Request $request, ConversationRepository $conversation, UserRepository $user, $userSlug = null)
+    public function show($userSlug, $recipient, Request $request, ConversationRepository $conversation, UserRepository $user)
     {
         $request->validate([
             'offset'   => 'required|numeric',
             'pagesize' => 'required|numeric',
         ]);
         $recipient = $user->find($recipient)->id;
-
+        $sender = $user->find($userSlug)->id;
         return response(
-            $conversation->get($recipient, $request->offset, $request->pagesize)
+            $conversation->get($recipient, $request->offset, $request->pagesize, $sender)
         );
     }
 
@@ -61,9 +62,9 @@ class ConversationsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($recipient, Request $request, ConversationRepository $conversation, UserRepository $user, $userSlug = null)
+    public function destroy($userSlug, $recipient, Request $request, ConversationRepository $conversation, UserRepository $user)
     {
-        $owner = $request->user()->id;
+        $owner = $user->find($userSlug)->id;
         $recipient = $user->find($recipient)->id;
 
         return response($conversation->delete($owner, $recipient));

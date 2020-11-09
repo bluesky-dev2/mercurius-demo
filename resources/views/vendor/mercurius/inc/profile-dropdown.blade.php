@@ -9,7 +9,7 @@
         <mercurius-avatar
             size="45"
             :name="user.name"
-            :image="user.avatar"
+            :image="'/' + user.avatar"
             :is_online="user.is_online"
         ></mercurius-avatar>
     </template>

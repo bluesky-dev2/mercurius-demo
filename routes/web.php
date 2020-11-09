@@ -50,8 +50,8 @@ Route::group([
 
     // Conversations
     Route::get('/{userSlug}/conversations', 'ConversationsController@index');
-    Route::post('/conversations/{receiver}', 'ConversationsController@show');
-    Route::delete('/conversations/{receiver}', 'ConversationsController@destroy');
+    Route::post('/{userSlug}/conversations/{receiver}', 'ConversationsController@show');
+    Route::delete('/{userSlug}/conversations/{receiver}', 'ConversationsController@destroy');
 
     // Messages
     Route::post('/{userSlug}/messages', 'MessagesController@send');

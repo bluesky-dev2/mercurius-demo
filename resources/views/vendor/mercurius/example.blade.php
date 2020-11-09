@@ -36,7 +36,7 @@
                             <mercurius-avatar
                                 :name="user.name"
                                 size="30"
-                                :image="user.avatar"
+                                :image="'/' + user.avatar"
                                 :is_online="user.is_online"
                             ></mercurius-avatar>
                         </template>

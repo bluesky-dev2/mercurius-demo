@@ -27,13 +27,13 @@ class MessagesController extends Controller
      *
      * @return array
      */
-    public function send(Request $request, MessageRepository $msg, UserRepository $user, $userSlug = null)
+    public function send($userSlug, Request $request, MessageRepository $msg, UserRepository $user)
     {
         $request->validate([
             'recipient' => 'required|string',
             'message'   => 'required|string',
         ]);
-        $from = $request->user();
+        $from = $user->find($userSlug);
         $receiver = $user->find($request->recipient);
         $message = $request->message;
 
@@ -49,10 +49,10 @@ class MessagesController extends Controller
      *
      * @return array
      */
-    public function destroy($message, MessageRepository $repo, Request $request, UserRepository $user, $userSlug = null)
+    public function destroy($userSlug = null, $message, MessageRepository $repo, Request $request, UserRepository $user)
     {
         $msg = Mercurius::model('message')->findOrFail($message);
-
-        return $repo->delete($msg, $request->user()->id);
+        $userId = $user->find($userSlug)->id;
+        return $repo->delete($msg, $userId);
     }
 }
