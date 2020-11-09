@@ -3,6 +3,7 @@
 @section('content')
     @include('mercurius::inc.profile-dropdown')
 
+    <input type="hidden" id="userSlug" value="{{ $userSlug ?? '' }}">
     <div class="conversations_empty" v-show="showEmptyWrap" v-cloak>
         <h4 class="title">@{{ __('conversations_empty') }}</h4>
     </div>

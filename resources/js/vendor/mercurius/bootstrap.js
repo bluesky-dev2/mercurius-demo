@@ -16,8 +16,12 @@ window.moment  = moment;
 window.Promise = require('promise');
 window.Pusher  = require('pusher-js');
 
+let userSlugEl = document.getElementById("userSlug");
+if (userSlugEl) {
+    axios.defaults.baseURL = userSlugEl.value;
+}
 
-require('./bootstrap-mercurius');
+    require('./bootstrap-mercurius');
 require('./core/I18N.js');
 
 

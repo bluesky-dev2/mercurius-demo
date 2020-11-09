@@ -25,4 +25,10 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function userMessages() {
+        $user = auth()->user();
+
+        return redirect($user->slug.'/messages');
+    }
 }
