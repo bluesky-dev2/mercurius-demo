@@ -10,6 +10,8 @@ const mix = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
-
+mix.sass('resources/sass/vendor/mercurius/mercurius.scss', 'public/vendor/mercurius/css/mercurius.css')
+    .options({processCssUrls: false});
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
+mix.js('resources/js/vendor/mercurius/bootstrap.js', 'public/vendor/mercurius/js/mercurius.js');

@@ -1,4 +1,6 @@
 {
+    "/vendor/mercurius/js/mercurius.js": "/vendor/mercurius/js/mercurius.js",
     "/js/app.js": "/js/app.js",
+    "/vendor/mercurius/css/mercurius.css": "/vendor/mercurius/css/mercurius.css",
     "/css/app.css": "/css/app.css"
 }
