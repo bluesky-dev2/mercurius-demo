@@ -7,6 +7,7 @@
             :class="{disabled: is_sending}"
             ref="inpmessage"
             v-model.trim="message"
+            @input="onTyping"
             @keyup.enter="onSend"
             :placeholder="'type_message' | __"
             :disabled="is_sending"
@@ -38,12 +39,13 @@ export default {
     data() {
         return {
             message: '',
+            typing: false
         }
     },
 
 
     created() {
-        Bus.$on('mercuriusComposeNewMessage', () => this.reset())
+        Bus.$on('mercuriusConversationLoaded', conv => this.onConversationLoaded(conv))
         Bus.$on('mercuriusConversationDeleted', user => this.onConversationDeleted(user));
         Bus.$on('mercuriusMessageSent', () => this.reset())
     },
@@ -53,12 +55,22 @@ export default {
         reset() {
             this.message = ''
         },
+        onConversationLoaded(conv) {
+            this.reset();
+            setTimeout(() => { this.$refs.inpmessage.focus() }, 125);
+        },
         onConversationDeleted(user) {
             if (this.conversation.slug === user) this.reset()
         },
         onSend() {
             if (_.isEmpty(this.message)) return
             this.sendMessage(this.conversation.slug, this.message);
+        },
+        onTyping() {
+            let channel = Echo.private('mercurius.conversation.'+this.conversation.slug);
+            setTimeout(function() {
+                channel.whisper('typing', Mercurius.user.slug);
+            }, 500);
         },
     },
 
@@ -68,5 +80,5 @@ export default {
             return !_.isEmpty(this.conversation);
         },
     },
-}
+};
 </script>

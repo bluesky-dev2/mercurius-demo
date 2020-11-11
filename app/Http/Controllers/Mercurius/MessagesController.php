@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Mercurius;
 
 use Illuminate\Http\Request;
 use Launcher\Mercurius\Facades\Mercurius;
-use Launcher\Mercurius\Repositories\MessageRepository;
-use Launcher\Mercurius\Repositories\UserRepository;
+use App\Repositories\MessageRepository;
+use App\Repositories\UserRepository;
 
 class MessagesController extends Controller
 {

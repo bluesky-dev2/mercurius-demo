@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Mercurius;
 
 use Illuminate\Http\Request;
-use Launcher\Mercurius\Repositories\ConversationRepository;
-use Launcher\Mercurius\Repositories\UserRepository;
+use App\Repositories\ConversationRepository;
+use App\Repositories\UserRepository;
 
 class ConversationsController extends Controller
 {

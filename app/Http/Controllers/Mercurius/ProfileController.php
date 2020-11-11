@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Mercurius;
 
 use Illuminate\Http\Request;
-use Launcher\Mercurius\Events\UserGoesActive;
-use Launcher\Mercurius\Events\UserGoesInactive;
-use Launcher\Mercurius\Events\UserStatusChanged;
-use Launcher\Mercurius\Repositories\ConversationRepository;
-use Launcher\Mercurius\Repositories\UserRepository;
+use App\Events\UserGoesActive;
+use App\Events\UserGoesInactive;
+use App\Events\UserStatusChanged;
+use App\Repositories\ConversationRepository;
+use App\Repositories\UserRepository;
 
 class ProfileController extends Controller
 {

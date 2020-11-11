@@ -12,7 +12,7 @@
                 size="100"
                 border="3"
                 :name="user.name"
-                :image="'/' + user.avatar"
+                :image="user.avatar"
                 :is_online="user.is_online"
             ></mercurius-avatar>
             <h4 v-text="user.name" class="profile-name my-2"></h4>

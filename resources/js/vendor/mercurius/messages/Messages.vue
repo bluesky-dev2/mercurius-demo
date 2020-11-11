@@ -10,6 +10,28 @@
             @handle-scroll="onScroll"
         >
             <div class="messages">
+
+                <!-- Typing indicator -->
+                <div class="mt-2" v-if="is_typing && !!conversationId ">
+                    <div class="message_row msg_received">
+                        <div class="message">
+                            <img
+                                class="message__avatar"
+                                :alt="conversation.user"
+                                :src="conversation.avatar"
+                            />
+                            <div
+                                class="message__body"
+                                v-b-tooltip.show.right
+                                :title="'is_typing' | __"
+                                >
+                                <svg class="ic"><use xlink:href="#icon-ani-dots"></use></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <template v-for="(msg, idx) in messages">
                     <div
                         class="message_row"
@@ -89,6 +111,8 @@ export default {
 
     data() {
         return {
+            is_typing: false,
+            type_timeout: null,
             ops: {
                 scrollPanel: {
                     initialScrollY: 100,
@@ -105,6 +129,10 @@ export default {
     created() {
         Bus.$on('mercuriusMessageReceived', (usr, sender, msg) => this.onMessageReceived(sender, msg))
         Bus.$on('mercuriusMessageSent', (msg) => this.onMessageSent(msg))
+        Bus.$on('mercuriusConversationOpen', conv => this.onLoadMessages(conv));
+        Bus.$on('mercuriusConversationClose', () => this.loadMessagesReset());
+        Bus.$on('mercuriusConversationDeleted', user => this.onConversationDeleted(user));
+        Bus.$on('mercuriusUserTyping', usr => this.onTyping(usr))
     },
 
 
@@ -121,14 +149,6 @@ export default {
             if (h < 24*7) return m.format('ddd HH:mm')      // Mon 14:00
             if (h < 24*365) return m.format('D MMMM HH:mm') // 25 August 14:00
             return m.format('DD/MM/YYYY HH:mm')             // 25/08/2017 14:00
-        },
-    },
-
-
-    watch: {
-        conversation: function (newV, oldV) {
-            if (newV === oldV) return;
-            _.isEmpty(newV) ? this.loadMessagesReset() : this.onLoadMessages(newV);
         },
     },
 
@@ -175,7 +195,9 @@ export default {
             return (this.messages[idx+1].sender === msg.sender);
         },
         _scrollTo(y_val) {
-            this.$refs.wrap.scrollTo({x: 0, y: y_val}, false)
+            setTimeout(() => {
+                this.$refs.wrap.scrollTo({x: 0, y: y_val}, false)
+            }, 250);
         },
         _appendMsg(msg) {
             this.messages.unshift(msg)
@@ -185,16 +207,29 @@ export default {
 
         // Event handlers
         //
+        onTyping(usr) {
+            if (this.conversationId != usr) return
+            if (this.type_timeout) clearTimeout(this.type_timeout);
+            this.type_timeout = setTimeout(() => {
+                this.is_typing = false;
+            }, 2000);
+            this.is_typing = true
+            this._scrollTo('100%')
+        },
         onMessageSent(msg) {
             this._appendMsg(msg)
         },
         onMessageReceived(sender, msg) {
-            if (this.conversation.slug === sender.slug) this._appendMsg(msg)
+            if (this.conversationId === sender.slug) this._appendMsg(msg)
         },
-        onLoadMessages(usr) {
-            this.loadMessagesStart(usr.slug)
+        onConversationDeleted(user) {
+            if (this.conversationId === user) this.loadMessagesReset()
+        },
+        onLoadMessages(conv) {
+            this.loadMessagesStart(conv.slug)
                 .then(() => {
-                    setTimeout(() => this._scrollTo('100%'), 250);
+                    Bus.$emit('mercuriusConversationLoaded', conv);
+                    setTimeout(() => this._scrollTo('100%'), 125);
                 });
         },
         onScroll(barY, barX, e) {
@@ -204,5 +239,5 @@ export default {
                 .then(() => this._scrollTo('25%'));
         },
     }
-}
+};
 </script>

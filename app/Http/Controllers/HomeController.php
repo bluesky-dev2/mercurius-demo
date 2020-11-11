@@ -29,7 +29,7 @@ class HomeController extends Controller
     public function userMessages() {
         $user = auth()->user();
 
-//        return redirect($user->slug.'/messages');
-        return redirect('messages');
+        return redirect($user->slug.'/messages');
+//        return redirect('messages');
     }
 }

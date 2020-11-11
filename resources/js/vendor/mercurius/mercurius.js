@@ -25,7 +25,8 @@ module.exports = {
 
         Bus.$on('mercuriusConversationsLoaded', res => this.onConversationsLoaded(res));
         Bus.$on('mercuriusConversationDeleted', usrId => this.onConversationDeleted(usrId));
-        Bus.$on('mercuriusOpenConversation', conv => this.onOpenConversation(conv));
+        Bus.$on('mercuriusConversationOpen', conv => this.onConversationOpen(conv));
+        Bus.$on('mercuriusConversationLoaded', conv => {this.conversation = conv});
         Bus.$on('mercuriusComposeNewMessage', () => this.onComposeNewMessage());
     },
 
@@ -46,12 +47,49 @@ module.exports = {
 
     methods: {
         /**
-         * Setup event listener using Laravel Echo and Pusher.
+         * Setup event listener using Laravel Echo.
          */
         listen() {
-            Echo.private('mercurius.'+this.user.slug)
-                .listen('.mercurius.message.sent', e => this.onMessageReceived(e))
-                .listen('.mercurius.user.status.changed', user => this.onUserStatusChanged(user));
+            if (window.UserSlug !== '') {
+                Echo.private('fakechat.'+window.UserSlug)
+                    .listen('.mercurius.message.sent', this.onMessageReceived)
+                    .listen('.mercurius.user.status.changed', this.onUserStatusChanged);
+
+                Echo.private('fakechat.conversation.'+window.UserSlug)
+                    .listenForWhisper('typing', (usr) => {
+                        Bus.$emit('mercuriusUserTyping', usr)
+                    });
+            } else {
+                Echo.private('mercurius.'+this.user.slug)
+                    .listen('.mercurius.message.sent', this.onMessageReceived)
+                    .listen('.mercurius.user.status.changed', this.onUserStatusChanged);
+
+                Echo.private('mercurius.conversation.'+this.user.slug)
+                    .listenForWhisper('typing', (usr) => {
+                        Bus.$emit('mercuriusUserTyping', usr)
+                    });
+            }
+
+        },
+
+
+        /**
+         * When opening a conversation.
+         */
+        onConversationOpen(conv) {
+            this.conversation = false
+            this.finding_recipient = false
+        },
+
+
+        /**
+         * Closes a conversation.
+         *
+         * @param {object} conv
+         */
+        onConversationClose(conv) {
+            this.conversation = false
+            Bus.$emit('mercuriusConversationClose');
         },
 
 
@@ -74,25 +112,16 @@ module.exports = {
 
 
         /**
-         * When opening a conversation.
-         */
-        onOpenConversation(conv) {
-            this.conversation = conv
-            this.finding_recipient = false
-        },
-
-
-        /**
          * When composing a new message.
          */
         onComposeNewMessage() {
-            this.conversation = false
+            this.onConversationClose(this.conversation);
             this.finding_recipient = true
         },
 
 
         /**
-         * Conversation was loaded.
+         * Conversations list was loaded.
          */
         onConversationsLoaded(data) {
             this.conversations = data;

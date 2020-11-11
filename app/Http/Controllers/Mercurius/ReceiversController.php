@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Mercurius;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Launcher\Mercurius\Repositories\UserRepository;
+use App\Repositories\UserRepository;
 
 class ReceiversController extends Controller
 {
