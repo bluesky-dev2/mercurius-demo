@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Repositories\UserRepository;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -63,10 +64,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $user = new UserRepository();
+
+        $slug = str_slug($data['name']);
+
+        if ($user->find($slug)) {
+            $slug = $this->incrementSlug($slug, $user);
+        }
+
         return User::create([
             'name' => $data['name'],
+            'slug' => $slug,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    public function incrementSlug($slug, UserRepository $user) {
+        $original = $slug;
+        $count = 2;
+
+        while ($user->find($slug)) {
+            $slug = "{$original}-" . $count++;
+        }
+
+        return $slug;
     }
 }

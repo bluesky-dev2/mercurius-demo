@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                    <form method="POST" action="{{ route('signin') }}">
                         @csrf
 
                         <div class="form-group row">
@@ -52,7 +52,7 @@
 
                 <div class="card-footer">
                     <div class="d-flex justify-content-center links">
-                        Don't have an account? &nbsp <a href="{{ route('register') }}">Sign Up</a>
+                        Don't have an account? &nbsp <a href="{{ route('signup') }}">Sign Up</a>
                     </div>
 {{--                    <div class="d-flex justify-content-center">--}}
 {{--                        <a href="{{ route('password.request') }}">Forgot your password?</a>--}}

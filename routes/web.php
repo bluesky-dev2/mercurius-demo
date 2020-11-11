@@ -12,12 +12,14 @@
 */
 
 Route::get('/', function () {
-    return redirect('login');
+    return redirect('signin');
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::any('/signin', 'HomeController@signin')->name('signin');
+Route::any('/signup', 'HomeController@signup')->name('signup');
 
 Route::get('/join-slack-launcher-host', ['uses'=>'SlackInvitationController@slackPage'])->name('slack-invitation');
 Route::post('/join-slack-launcher-host',['uses'=>'SlackInvitationController@sendInvitation']);
